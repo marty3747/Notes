@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         notes.add(new Note("Диплом", "Сделать прическу", "Понедельник", 7));
         notes.add(new Note("Мольберт", "Сделать прическу", "Понедельник", 8));
         notes.add(new Note("Эйнштейн", "Сделать прическу", "Понедельник", 9));
-        notes.add(new Note("Граццио", "Сделать прическу", "Понедельник", 10));
+        notes.add(new Note("Граццио", "Сделать прическу", "Понедельник", 10)); 
         NotesAdapter adapter = new NotesAdapter(notes);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
