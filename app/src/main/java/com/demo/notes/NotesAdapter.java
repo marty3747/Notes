@@ -6,15 +6,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
     private ArrayList<Note> notes;
+    private OnNoteClickListener onNoteClickListener;
+
 
     public NotesAdapter(ArrayList<Note> notes) {
         this.notes = notes;
+    }
+
+    interface OnNoteClickListener {
+        void onNoteClick(int position);
+        void onLongClick(int position);
+    }
+
+    public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
+        this.onNoteClickListener = onNoteClickListener;
     }
 
     @NonNull
@@ -30,7 +42,20 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         holder.textViewTitle.setText(note.getTitle());
         holder.textViewDescription.setText(note.getDescription());
         holder.textViewViewDayOfWeek.setText(note.getDayOfWeek());
-        holder.textViewTitle.setText(String.format("%s", note.getPriority()));
+        int colorId = 0;
+        int priority = note.getPriority();
+        switch (priority) {
+            case 1:
+                colorId = ContextCompat.getColor(holder.itemView.getContext(), R.color.red);
+                break;
+            case 2:
+                colorId = ContextCompat.getColor(holder.itemView.getContext(), R.color.orange);
+                break;
+            default:
+                colorId = ContextCompat.getColor(holder.itemView.getContext(), R.color.green);
+                break;
+        }
+        holder.textViewTitle.setBackgroundColor(colorId);
     }
 
     @Override
@@ -43,14 +68,29 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         private TextView textViewTitle;
         private TextView textViewDescription;
         private TextView textViewViewDayOfWeek;
-        private TextView textViewPriority;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewViewDayOfWeek = itemView.findViewById(R.id.textViewDayOfWeek);
-            textViewPriority = itemView.findViewById(R.id.textViewPriority);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onNoteClickListener != null) {
+                        onNoteClickListener.onNoteClick(getAdapterPosition());
+                    }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (onNoteClickListener != null) {
+                        onNoteClickListener.onLongClick(getAdapterPosition());
+                    }
+                    return true;
+                }
+            });
         }
     }
 }
